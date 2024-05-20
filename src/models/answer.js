@@ -5,8 +5,8 @@ const answerSchema = mongoose.Schema({
   date: { type: Date, default: Date.now },
   answer_text: { type: String, required: true },
   question_id: { type: String, required: true },
-  gained_likes: { type: Array },
-  gained_dislikes: { type: Array },
+  gained_likes: { type: Array, default: [] },
+  gained_dislikes: { type: Array, default: [] },
 });
 
 export default mongoose.model("Answer", answerSchema);

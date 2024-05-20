@@ -59,4 +59,70 @@ const DELETE_ANSWER_BY_ID = async (req, res) => {
   }
 };
 
-export { CREATE_ANSWER, DELETE_ANSWER_BY_ID, GET_ALL_ANSWERS };
+const LIKE_ANSWER = async (req, res) => {
+  try {
+    const userId = req.body.user_id;
+
+    const answer = await AnswerModel.findOne({ id: req.params.id });
+
+    if (!answer) {
+      return res
+        .status(404)
+        .json({ message: `Answer with id: ${req.params.id} was not found` });
+    }
+
+    if (answer.gained_likes.includes(userId)) {
+      return res
+        .status(400)
+        .json({ message: "User has already liked this answer" });
+    }
+
+    if (answer.gained_dislikes.includes(userId)) {
+      answer.gained_dislikes.pull(userId);
+    }
+
+    answer.gained_likes.push(userId);
+
+    await answer.save();
+
+    return res.status(200).json({ message: "Answer liked", answer: answer });
+  } catch (err) {
+    console.log("handled error: ", err);
+    return res.status(500).json({ message: "error happened" });
+  }
+};
+
+const DISLIKE_ANSWER = async (req, res) => {
+  try {
+    const userId = req.body.user_id; 
+
+    const answer = await AnswerModel.findOne({ id: req.params.id });
+
+    if (!answer) {
+      return res
+        .status(404)
+        .json({ message: `Answer with id: ${req.params.id} was not found` });
+    }
+
+    if (answer.gained_dislikes.includes(userId)) {
+      return res
+        .status(400)
+        .json({ message: "User has already disliked this answer" });
+    }
+
+    if (answer.gained_likes.includes(userId)) {
+      answer.gained_likes.pull(userId);
+    }
+
+    answer.gained_dislikes.push(userId);
+
+    await answer.save();
+
+    return res.status(200).json({ message: "Answer disliked", answer: answer });
+  } catch (err) {
+    console.log("handled error: ", err);
+    return res.status(500).json({ message: "error happened" });
+  }
+};
+
+export { CREATE_ANSWER, DELETE_ANSWER_BY_ID, GET_ALL_ANSWERS, LIKE_ANSWER, DISLIKE_ANSWER };
