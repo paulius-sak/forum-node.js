@@ -115,7 +115,7 @@ const REFRESH_TOKEN = async (req, res) => {
 
 const GET_ALL_USERS = async (req, res) => {
   try {
-    const users = await UserModel.find().sort({ name: 1 });
+    const users = await UserModel.find()
 
     return res.json({ users: users });
   } catch (err) {
