@@ -13,6 +13,8 @@ const SIGN_IN = async (req, res) => {
       name: req.body.name,
       email: req.body.email,
       password: hash,
+      avatarUrl: req.body.avatarUrl,
+      date: Date.now(),
     });
 
     const response = await user.save();
@@ -141,6 +143,23 @@ const GET_USERS_BY_ID = async (req, res) => {
   }
 };
 
+const GET_CURRENT_USER = async (req, res) => {
+  try {
+    const userId = req.body.id;
+    const user = await UserModel.findOne({ id: userId });
+
+    if (!user) {
+      return res.status(404).json({
+        message: `User not found`,
+      });
+    }
+
+    return res.json({ user: user });
+  } catch (err) {
+    console.log("handled error: ", err);
+    return res.status(500).json({ message: "error happened" });
+  }
+};
 
 
 export {
@@ -149,4 +168,5 @@ export {
   REFRESH_TOKEN,
   GET_ALL_USERS,
   GET_USERS_BY_ID,
+  GET_CURRENT_USER
 };

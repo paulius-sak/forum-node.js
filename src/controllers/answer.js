@@ -3,13 +3,15 @@ import AnswerModel from "../models/answer.js";
 
 const CREATE_ANSWER = async (req, res) => {
   try {
+    const { question_id } = req.params
     const answer = new AnswerModel({
       id: uuidv4(),
       date: Date.now(),
       answer_text: req.body.answer_text,
-      question_id: req.body.question_id,
+      question_id: question_id,
       gained_likes: [],
       gained_dislikes: [],
+      user_id: req.body.id,
     });
 
     const response = await answer.save();
@@ -27,7 +29,7 @@ const GET_ALL_ANSWERS = async (req, res) => {
   try {
     const answers = await AnswerModel.find({ question_id: req.params.id });
 
-    if (answers.length === 0) {
+    if (!answers.length) {
       return res.status(404).json({
         message: `Question with id: ${req.params.id} have no answers`,
       });
@@ -61,7 +63,7 @@ const DELETE_ANSWER_BY_ID = async (req, res) => {
 
 const LIKE_ANSWER = async (req, res) => {
   try {
-    const userId = req.body.user_id;
+    const userId = req.body.id;
 
     const answer = await AnswerModel.findOne({ id: req.params.id });
 
@@ -94,7 +96,7 @@ const LIKE_ANSWER = async (req, res) => {
 
 const DISLIKE_ANSWER = async (req, res) => {
   try {
-    const userId = req.body.user_id; 
+    const userId = req.body.id; 
 
     const answer = await AnswerModel.findOne({ id: req.params.id });
 

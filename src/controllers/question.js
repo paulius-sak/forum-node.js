@@ -8,7 +8,7 @@ const CREATE_QUESTION = async (req, res) => {
       date: Date.now(),
       question_title: req.body.question_title,
       question_text: req.body.question_text,
-      user_id: req.body.user_id,
+      user_id: req.body.id,
     });
 
     const response = await question.save();
@@ -24,8 +24,26 @@ const CREATE_QUESTION = async (req, res) => {
 
 const GET_ALL_QUESTIONS = async (req, res) => {
   try {
-    const questions = await QuestionModel.find();
-
+    const questions = await QuestionModel.aggregate([
+      {
+        $lookup: {
+          from: 'answers', 
+          localField: 'id', 
+          foreignField: 'question_id', 
+          as: 'answers' 
+        }
+      },
+      {
+        $addFields: {
+          answer_count: { $size: '$answers' } 
+        }
+      },
+      {
+        $project: {
+          answers: 0 // Exclude the answers array from the final result
+        }
+      }
+    ]);
     return res.json({ questions: questions });
   } catch (err) {
     console.log("handled error: ", err);
@@ -33,7 +51,7 @@ const GET_ALL_QUESTIONS = async (req, res) => {
   }
 };
 
-// sito endpoint gali nereiketi
+
 const GET_QUESTION_BY_ID = async (req, res) => {
   try {
     const question = await QuestionModel.findOne({

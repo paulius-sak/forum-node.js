@@ -35,7 +35,8 @@ const userSchema = mongoose.Schema({
     },
   },
   password: { type: String, required: true },
-  avatarUrl: {type: String, default: "https://cdn.vectorstock.com/i/500p/53/42/user-member-avatar-face-profile-icon-vector-22965342.avif"}
+  avatarUrl: {type: String, default: "https://cdn.vectorstock.com/i/500p/53/42/user-member-avatar-face-profile-icon-vector-22965342.avif"},
+  date: { type: Date, default: Date.now },
 });
 
 export default mongoose.model("User", userSchema);

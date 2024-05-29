@@ -10,8 +10,8 @@ import auth from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.post("/questions/:id/answers", auth, CREATE_ANSWER);
-router.get("/questions/:id/answers", auth, GET_ALL_ANSWERS);
+router.post("/questions/:question_id/answers", auth, CREATE_ANSWER);
+router.get("/questions/:id/answers", GET_ALL_ANSWERS);
 router.delete("/answers/:id", auth, DELETE_ANSWER_BY_ID);
 
 router.post("/answers/:id/like", auth, LIKE_ANSWER);
