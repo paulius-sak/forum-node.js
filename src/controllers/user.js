@@ -52,7 +52,7 @@ const LOG_IN = async (req, res) => {
     const jwt_token = jwt.sign(
       { userEmail: user.email, user_id: user.id },
       process.env.JWT_SECRET,
-      { expiresIn: "2h" }
+      { expiresIn: "24h" }
     );
 
     const jwt_refresh_token = jwt.sign(

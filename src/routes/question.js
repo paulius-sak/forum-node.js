@@ -1,7 +1,6 @@
 import express from "express";
 import {CREATE_QUESTION, GET_ALL_QUESTIONS, GET_QUESTION_BY_ID, DELETE_QUESTION_BY_ID} from "../controllers/question.js"
 import auth from "../middleware/auth.js"
-import validation from "../middleware/validation.js"
 
 
 const router = express.Router();

@@ -24,33 +24,51 @@ const CREATE_QUESTION = async (req, res) => {
 
 const GET_ALL_QUESTIONS = async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 3;
+    const skip = (page - 1) * limit;
+
     const questions = await QuestionModel.aggregate([
       {
         $lookup: {
-          from: 'answers', 
-          localField: 'id', 
-          foreignField: 'question_id', 
-          as: 'answers' 
-        }
+          from: "answers",
+          localField: "id",
+          foreignField: "question_id",
+          as: "answers",
+        },
       },
       {
         $addFields: {
-          answer_count: { $size: '$answers' } 
-        }
+          answer_count: { $size: "$answers" },
+        },
       },
       {
         $project: {
-          answers: 0 // Exclude the answers array from the final result
-        }
-      }
+          answers: 0,
+        },
+      },
+      {
+        $skip: skip,
+      },
+      {
+        $limit: limit,
+      },
     ]);
-    return res.json({ questions: questions });
+
+    const totalQuestions = await QuestionModel.countDocuments();
+    const totalPages = Math.ceil(totalQuestions / limit);
+
+    return res.json({
+      totalQuestions: totalQuestions,
+      totalPages: totalPages,
+      currentPage: page,
+      questions: questions,
+    });
   } catch (err) {
     console.log("handled error: ", err);
     return res.status(500).json({ message: "error happened" });
   }
 };
-
 
 const GET_QUESTION_BY_ID = async (req, res) => {
   try {
@@ -92,4 +110,9 @@ const DELETE_QUESTION_BY_ID = async (req, res) => {
   }
 };
 
-export { CREATE_QUESTION, GET_ALL_QUESTIONS, GET_QUESTION_BY_ID, DELETE_QUESTION_BY_ID };
+export {
+  CREATE_QUESTION,
+  GET_ALL_QUESTIONS,
+  GET_QUESTION_BY_ID,
+  DELETE_QUESTION_BY_ID,
+};
