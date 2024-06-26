@@ -25,8 +25,17 @@ const CREATE_QUESTION = async (req, res) => {
 const GET_ALL_QUESTIONS = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 3;
+    const limit = parseInt(req.query.limit) || 5;
+    const filter = req.query.filter || "all";
     const skip = (page - 1) * limit;
+
+
+    let match = {};
+    if (filter === "answered") {
+      match = { answer_count: { $gt: 0 } };
+    } else if (filter === "unanswered") {
+      match = { answer_count: { $eq: 0 } };
+    }
 
     const questions = await QuestionModel.aggregate([
       {
@@ -41,6 +50,12 @@ const GET_ALL_QUESTIONS = async (req, res) => {
         $addFields: {
           answer_count: { $size: "$answers" },
         },
+      },
+      {
+        $match: match,
+      },
+      {
+        $sort: { answer_count: -1 },
       },
       {
         $project: {
