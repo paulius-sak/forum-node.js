@@ -161,6 +161,26 @@ const GET_CURRENT_USER = async (req, res) => {
   }
 };
 
+const DELETE_USER = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const user = await UserModel.findOneAndDelete({ id: userId });
+
+    if (!user) {
+      return res.status(404).json({
+        message: `User with id: ${userId} was not found`,
+      });
+    }
+
+    return res.status(200).json({
+      message: `User with id: ${userId} has been deleted successfully`,
+    });
+  } catch (err) {
+    console.log("handled error: ", err);
+    return res.status(500).json({ message: "error happened" });
+  }
+};
+
 
 export {
   SIGN_IN,
@@ -168,5 +188,6 @@ export {
   REFRESH_TOKEN,
   GET_ALL_USERS,
   GET_USERS_BY_ID,
-  GET_CURRENT_USER
+  GET_CURRENT_USER,
+  DELETE_USER
 };
