@@ -85,6 +85,21 @@ const GET_ALL_QUESTIONS = async (req, res) => {
   }
 };
 
+const GET_ALL_USER_QUESTIONS = async (req, res) => {
+  try {
+    console.log("User ID:", req.body.id); // Log the user ID to verify
+
+    const questions = await QuestionModel.find({ user_id: req.body.id });
+
+    console.log("Fetched questions:", questions); // Log the fetched questions
+
+    return res.json({ questions: questions });
+  } catch (err) {
+    console.log("Handled error:", err);
+    return res.status(500).json({ message: "Error happened" });
+  }
+};
+
 const GET_QUESTION_BY_ID = async (req, res) => {
   try {
     const question = await QuestionModel.findOne({
@@ -130,4 +145,5 @@ export {
   GET_ALL_QUESTIONS,
   GET_QUESTION_BY_ID,
   DELETE_QUESTION_BY_ID,
+  GET_ALL_USER_QUESTIONS,
 };
