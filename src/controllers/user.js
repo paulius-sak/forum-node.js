@@ -161,6 +161,36 @@ const GET_CURRENT_USER = async (req, res) => {
   }
 };
 
+const UPDATE_USER = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const updates = req.body;
+
+    // if (updates.password) {
+    //   const salt = bcrypt.genSaltSync(10);
+    //   updates.password = bcrypt.hashSync(updates.password, salt);
+    // }
+
+    const user = await UserModel.findOneAndUpdate({ id: userId }, updates, {
+      new: true,
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: `User with id: ${userId} was not found`,
+      });
+    }
+
+    return res.status(200).json({
+      message: `User with id: ${userId} has been updated successfully`,
+      user: user,
+    });
+  } catch (err) {
+    console.log("handled error: ", err);
+    return res.status(500).json({ message: "error happened" });
+  }
+};
+
 const DELETE_USER = async (req, res) => {
   try {
     const userId = req.params.id;
@@ -189,5 +219,6 @@ export {
   GET_ALL_USERS,
   GET_USERS_BY_ID,
   GET_CURRENT_USER,
+  UPDATE_USER,
   DELETE_USER
 };
